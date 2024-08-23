@@ -3,16 +3,16 @@ from pymongo import MongoClient
 import bcrypt
 import base64
 
-# Database connection
+
 client = MongoClient("mongodb+srv://Apratim:wiINvlvnkfc5cRw4@atlascluster.mz70pny.mongodb.net/")
 db = client["MaxBPM"]
 users_collection = db["Users"]
 
-# Function to hash passwords
+
 def hash_password(password):
     return bcrypt.hashpw(password.encode(), bcrypt.gensalt())
 
-# Function to sign up a new user
+
 def sign_up(username, password, email=None, age=None, sex=None, confirm_password=None):
     if users_collection.find_one({"username": username}):
         st.warning("Username already exists. Please choose a different one.")
@@ -22,7 +22,7 @@ def sign_up(username, password, email=None, age=None, sex=None, confirm_password
         st.warning("Passwords do not match.")
     else:
         hashed_password = hash_password(password)
-        # Insert user info including optional fields into the database
+        
         users_collection.insert_one({
             "username": username,
             "password": hashed_password,
@@ -46,16 +46,14 @@ def update_profile(username, email, age, gender):
     )
     st.success("Profile updated successfully.")
 
-# Function to get user information
+
 def get_user_info(username):
     user = users_collection.find_one({"username": username})
     return user
 
-# Load background image
 file_ = open("image[1].png", "rb").read()
 base64_image = base64.b64encode(file_).decode()
 
-# Apply background image and frosted glass effect
 rawHTML = f"""
     <style>
     [data-testid="stAppViewContainer"] {{
@@ -69,7 +67,6 @@ rawHTML = f"""
 """
 st.markdown(rawHTML, unsafe_allow_html=True)
 
-# Authentication form with optional fields
 def authentication_form():
     st.title("Heart Disease Prediction App")
     
@@ -91,8 +88,7 @@ def authentication_form():
             if st.button("Log In"):
                 log_in(username, password)
         
-        st.markdown('</div>', unsafe_allow_html=True)  # End frosted glass div
-
+        st.markdown('</div>', unsafe_allow_html=True)  
 # Function to log in a user
 def log_in(username, password):
     user = users_collection.find_one({"username": username})
@@ -101,7 +97,7 @@ def log_in(username, password):
     elif bcrypt.checkpw(password.encode(), user['password']):
         st.session_state['logged_in'] = True
         st.session_state['username'] = username
-        st.session_state['user_info'] = user  # Store user info in session state
+        st.session_state['user_info'] = user  
     else:
         st.error("Invalid username or password")
 
@@ -113,13 +109,12 @@ def user_profile_page():
         user_info = get_user_info(st.session_state['username'])
         
         if user_info:
-            # Display user profile information
+           
             st.subheader("Personal Information")
             email = st.text_input("Email", value=user_info.get('email', ''))
             age = st.number_input("Age", min_value=0, max_value=120, step=1, value=user_info.get('age', 0))
             gender = st.selectbox("Gender", options=["Select", "Male", "Female", "Other"], index=["Select", "Male", "Female", "Other"].index(user_info.get('gender', "Select")))
             
-            # Display user heart health statistics
             st.subheader("Heart Health Statistics")
             st.metric(label="Max Heart Rate", value=user_info.get('max_heart_rate', 'N/A'))
             avg_heart_rate = user_info.get('avg_heart_rate', 'N/A')
@@ -134,16 +129,15 @@ def user_profile_page():
     else:
         st.error("User is not logged in.")
 
-# Main app logic
 def main_app():    
     dashboard = st.Page("dashboard.py", title="My Heart Statistics")
     prediction = st.Page("heartDisease.py", title="Heart Disease Prediction")
     
     if st.sidebar.button("Log Out"):
         st.session_state.clear()
-        st.session_state['logged_in'] = False  # Ensure logged out state
+        st.session_state['logged_in'] = False  
         st.write("You have been logged out. Please log in again.")
-        return  # Return from the main app to show the login/signup form
+        return 
     
     pg = st.navigation([dashboard, prediction])
     
