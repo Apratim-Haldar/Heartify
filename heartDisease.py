@@ -5,13 +5,11 @@ from pymongo import MongoClient
 import base64
 import time
 
-# Load the trained model and encoder
 with open('rf_model.pkl', 'rb') as model_file:
     model = pickle.load(model_file)
 with open('encoder.pkl', 'rb') as encoder_file:
     encoder = pickle.load(encoder_file)
 
-# Function to fetch the latest maxHR from MongoDB
 def fetch_latest_maxHR():
     try:
         cluster = MongoClient("mongodb+srv://Apratim:wiINvlvnkfc5cRw4@atlascluster.mz70pny.mongodb.net/")
@@ -22,9 +20,8 @@ def fetch_latest_maxHR():
             return record.get("maxBPM", 150)  # Default to 150 if no maxBPM found
     except Exception as e:
         st.error(f"Error fetching data: {e}")
-        return 150  # Default value if there's an error
+        return 150 
 
-# Fetch the latest maxHR value
 latest_maxHR = fetch_latest_maxHR()
 
 # Streamlit app layout
@@ -33,11 +30,9 @@ st.markdown("---")
 st.markdown("### How does it work?")
 st.markdown("This is Heartify's in built machine learning model that will help you predict likelihood of heart disease based on your current heart rate and a few other medical factors which you can get verified from your doctor.")
 
-# Load background image
 file_ = open("background.jpeg", "rb").read()
 base64_image = base64.b64encode(file_).decode()
 
-# Apply background image and frosted glass effect
 formBg = f"""
     <style>
     [data-testid="stAppViewContainer"] {{
@@ -138,9 +133,8 @@ with form.container():
         # Submit button
         submit_button = st.form_submit_button("Predict")
 
-        st.markdown('</div>', unsafe_allow_html=True)  # End frosted glass div
+        st.markdown('</div>', unsafe_allow_html=True)  
 
-    # Encode categorical inputs
     if submit_button:
         if age == 0:
             st.error("Age cannot be zero")
@@ -149,12 +143,12 @@ with form.container():
         else:
             user_input = np.array([[sex, chest_pain, resting_ecg, exercise_angina, st_slope]])
             user_input_encoded = encoder.transform(user_input).flatten()
-            # Combine all inputs into a single feature array
+            
             features = np.array([age, resting_bp, cholesterol, fasting_bs, latest_maxHR, oldpeak])
             features = np.concatenate([features, user_input_encoded])
-            # Predict using the trained model
+            
             prediction = model.predict([features])
-            # Display the prediction result
+            
             if prediction[0] == 1:
                 st.error("Warning: This individual is likely to have heart disease.")
             else:
