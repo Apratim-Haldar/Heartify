@@ -17,14 +17,13 @@ def fetch_latest_maxHR():
         collection = db["HeartRateMonitor"]
         latest_record = collection.find().sort("timestamp", -1).limit(1)
         for record in latest_record:
-            return record.get("maxBPM", 150)  # Default to 150 if no maxBPM found
+            return record.get("maxBPM", 150) 
     except Exception as e:
         st.error(f"Error fetching data: {e}")
         return 150 
 
 latest_maxHR = fetch_latest_maxHR()
 
-# Streamlit app layout
 st.title("Heart Disease Prediction")
 st.markdown("---")
 st.markdown("### How does it work?")
@@ -119,7 +118,7 @@ with form.container():
             fasting_bs = st.selectbox("Fasting Blood Sugar > 120 mg/dl", options=[0, 1])
             
         liveHeartRate = st.empty()
-        # Display Max Heart Rate as a static, non-editable metric
+       
         col1, col2 = st.columns(2)
         with col1:
             resting_ecg = st.selectbox("Resting ECG", options=['Normal', 'ST', 'LVH'])
@@ -130,7 +129,7 @@ with form.container():
             oldpeak = st.number_input("ST Depression (Oldpeak)", min_value=-5.0, max_value=10.0, step=0.1, value=1.0)
         with col2:
             st_slope = st.selectbox("ST Slope", options=['Up', 'Flat', 'Down'])
-        # Submit button
+        
         submit_button = st.form_submit_button("Predict")
 
         st.markdown('</div>', unsafe_allow_html=True)  
