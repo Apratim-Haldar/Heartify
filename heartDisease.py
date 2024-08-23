@@ -125,9 +125,6 @@ with form.container():
             
         liveHeartRate = st.empty()
         # Display Max Heart Rate as a static, non-editable metric
-        with liveHeartRate.container():
-            st.metric(label="Current Heart Rate (Automatically fetched from your Heartify)", value=latest_maxHR)
-            time.sleep(10)
         col1, col2 = st.columns(2)
         with col1:
             resting_ecg = st.selectbox("Resting ECG", options=['Normal', 'ST', 'LVH'])
@@ -162,3 +159,6 @@ with form.container():
                 st.error("Warning: This individual is likely to have heart disease.")
             else:
                 st.success("This individual is not likely to have heart disease.")
+with liveHeartRate.container():
+    st.metric(label="Current Heart Rate (Automatically fetched from your Heartify)", value=latest_maxHR)
+    time.sleep(10)
