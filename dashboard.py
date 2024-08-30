@@ -39,7 +39,7 @@ st.title("Real-Time Heart Rate Monitor")
 live_data_placeholder = st.empty()
 placeholder = st.empty()
 
-for seconds in range(200):
+while True:
     data = fetch_data()
     df = pd.DataFrame(data)
    
@@ -81,4 +81,5 @@ for seconds in range(200):
             st.line_chart(monthly_trends[['maxBPM', 'minBPM', 'avgBPM']], use_container_width=True)
             time.sleep(1)
     else:
-        print("No data available to display.")  
+        print("No data available to display.") 
+    time.sleep(20)
