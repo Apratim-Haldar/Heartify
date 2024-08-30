@@ -152,6 +152,7 @@ with form.container():
                 st.error("Warning: This individual is likely to have heart disease.")
             else:
                 st.success("This individual is not likely to have heart disease.")
-with liveHeartRate.container():
-    st.metric(label="Current Heart Rate (Automatically fetched from your Heartify)", value=latest_maxHR)
-    time.sleep(1)
+while True:
+    with liveHeartRate.container():
+        st.metric(label="Current Heart Rate (Automatically fetched from your Heartify)", value=latest_maxHR)
+        time.sleep(20)
