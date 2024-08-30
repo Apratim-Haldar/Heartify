@@ -154,4 +154,4 @@ with form.container():
                 st.success("This individual is not likely to have heart disease.")
 with liveHeartRate.container():
     st.metric(label="Current Heart Rate (Automatically fetched from your Heartify)", value=latest_maxHR)
-    time.sleep(10)
+    time.sleep(1)
